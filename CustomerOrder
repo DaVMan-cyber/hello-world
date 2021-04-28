@@ -1,0 +1,111 @@
+//AUTHOR: VICTOR BURGESS
+//COURSE: CPT 187
+//CREATE DATE: 4/22/21
+/* PURPOSE: Calculate price, provide the subject, verb, preposition, and last item selected index
+ * all for the main class to call, and also provide quantity 
+ */
+
+package edu.CPT187.burgess.project6;
+
+class CustomerOrder 
+{
+	//Variable declaration
+	private final double FLAT_FEE = 100.00;
+	private final double PRICE_PER_CHARACTER = 0.20;
+	private String printSubject = "";
+	private String printVerb = "";
+	private String printPreposition = "";
+	private String printObject = "";
+	private int lastItemSearchedIndex = 0;
+	private int quantity = 0;
+
+	//CONSTRUCTOR
+	//DEFAULT CONSTRUCTOR
+	public CustomerOrder()
+	{
+	}//END OF DEFAULT CONSTRUCTOR
+
+	//Set lastItemSearchedIndex equal to borrowedSearchIndex
+	public void setLastItemSearchedIndex(int borrowedSearchIndex)
+	{
+		lastItemSearchedIndex = borrowedSearchIndex;
+	}//END OF setLastItemSearchedIndex
+
+	//Set printSubject equal to borrowedPrintSubjects[lastItemSearchedIndex]
+	public void setPrintSubject(String[] borrowedPrintSubjects)
+	{
+		printSubject = borrowedPrintSubjects[lastItemSearchedIndex];
+	}//END OF setPrintSubject
+
+	//Set printVerb equal to borrowedPrintVerbs[lastItemSearchedIndex]
+	public void setPrintVerb(String[] borrowedPrintVerbs)
+	{
+		printVerb = borrowedPrintVerbs[lastItemSearchedIndex];
+	}//END OF setPrintVerb
+
+	//Set printPreposition equal to borrowedPrintVerbs[lastItemSearchedIndex]
+	public void setPrintPreposition(String[] borrowedPrintPrepositions)
+	{
+		printPreposition = borrowedPrintPrepositions[lastItemSearchedIndex];
+	}//END OF setPrintPreposition
+
+	//Set printObject equal to borrowedPrintObjects[lastItemSearchedIndex]
+	public void setPrintObject(String[] borrowedPrintObjects)
+	{
+		printObject = borrowedPrintObjects[lastItemSearchedIndex];
+	}//END OF setPrintObject
+
+	//Set quantity equal to borrowedNumberOfCopies
+	public void setQuantity(int borrowedNumberOfCopies)
+	{
+		quantity = borrowedNumberOfCopies;
+	}//End of setQuantity
+
+	//Return printSubject
+	public String getPrintSubject()
+	{
+		return printSubject;
+	}//END OF getPrintSubject
+
+	//Return printVerb
+	public String getPrintVerb()
+	{
+		return printVerb;
+	}//END OF getPrintVerb
+
+	//Return printPreposition
+	public String getPrintPreposition()
+	{
+		return printPreposition;
+	}//END OF getPrintPreposition
+
+	//Return printObject
+	public String getPrintObject()
+	{
+		return printObject;
+	}//END OF getPrintObject
+
+	//Finds length of printSubject + printVerb + printPreposition + printObject
+	public int getPrintLength()
+	{
+		return (printSubject + printVerb + printPreposition + printObject).length();
+	}//END OF getPrintLength
+
+	//Multiplies printLength to PRICE_PER_CHARACTER and adds FLAT_FEE
+	public double getPrintCost()
+	{
+		return (getPrintLength() * PRICE_PER_CHARACTER) + FLAT_FEE;
+	}//END OF getPrintCost
+
+	//Return quantity
+	public int getQuantity()
+	{
+		return quantity;
+	}//END OF getQuantity
+
+	//Return printCost * quantity
+	public double getTotalCost()
+	{
+		return getPrintCost() * quantity;
+	}//END OF getTotalCost
+}
