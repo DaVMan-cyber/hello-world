@@ -1,0 +1,157 @@
+//AUTHOR: VICTOR BURGESS
+//COURSE: CPT 187
+//STARTDATE: 4/22/21
+/* Writes, stores and pulls usernames and passwords for an order to be assigned to a name.
+ */
+package edu.CPT187.burgess.project6;
+import java.io.FileInputStream;
+import java.io.PrintWriter;
+import java.util.Scanner;
+import java.io.FileWriter;
+import java.io.IOException;
+class UserAccounts 
+{
+	//VARIABLE DECLARATION
+	private final int NOT_FOUND = -1;
+	private final int RESET_VALUE = 0;
+	private final int MAXIMUM_RECORDS = 50;
+	private String[] userNames = new String[MAXIMUM_RECORDS];
+	private String[] passwords = new String[MAXIMUM_RECORDS];
+	private String masterFileName = "";
+	private int recordCount = 0;
+	private int searchedIndex = 0;
+
+	//CONSTRUCTOR
+	public UserAccounts(String borrowedFileName)
+	{
+		masterFileName = borrowedFileName;
+	}//END OF CONSTRUCTOR
+
+	//Uses file handling logic to bring up users and set them into arrays
+	public void setUserAccountArrays()
+	{
+		//Opens file and continues only if the file is opened
+		try
+		{
+			//This statement will attempt to open the file
+			Scanner infile = new Scanner (new FileInputStream(masterFileName));
+			recordCount = 0;
+			//test condition for hasNext and maximum records (unknown file size so it remains untested)
+			while(infile.hasNext()== true && recordCount < MAXIMUM_RECORDS)
+			{
+				userNames[recordCount] = infile.next(); //assigns next to userNames
+				passwords[recordCount] = infile.next(); //assigns next to passwords
+				recordCount++; //INcrements recordCount to run through array
+			}//END OF WHILE LOOP FOR FILE ARRAY
+			infile.close();
+
+		}//END OF TRY
+
+		//Catches errors ONLY if the try block fails to open a file
+		catch(IOException ex)
+		{
+			//if the file is not found or opened, catch is executed; which sets the flag to "not found"
+
+			recordCount = NOT_FOUND;
+		}//END OF CATCH
+	}//END OF setUserAccountArrays
+
+	//Assigns getSeqSearch(borrowedUserName to searchedIndex)
+	public void setSearchedIndex(String borrowedUserName)
+	{
+		searchedIndex = getSeqSearch(borrowedUserName);
+	}//END OF setSearchedIndex
+
+	//Sets password and userName
+	public void setSearchedIndex(String borrowedUserName, String borrowedPassword)
+	{
+		//If searched index is equal to or greater than the research value and passwords match
+		//then set searched index equal to not found
+		searchedIndex = getSeqSearch(borrowedUserName);
+
+		if(searchedIndex >= RESET_VALUE && getPasswordMatch(borrowedPassword) == false)
+		{
+			searchedIndex = NOT_FOUND;
+		}//END OF IF STATEMENT
+
+	}//END OF setSearchedIndex overload method
+
+	//Write file based on inputted parameters, writes username and password to master file
+	public void setWriteOneRecord(String borrowedUserName, String borrowedPassword)
+	{
+		//Tries to open a file and only continues if the file is opened
+		try
+		{
+			//This attempts to open the file
+			PrintWriter filePW = new PrintWriter (new FileWriter(masterFileName, true));
+			//This statement writes the borrowed values to file, separated by tabs
+			filePW.printf("%s\t%s\t", borrowedUserName, borrowedPassword);
+			//Close the printWriter
+			filePW.close();
+		}//END OF TRY
+
+		//Catches errors only if the try block fails to open a file
+		catch (IOException ex)
+		{
+			recordCount = NOT_FOUND;
+		}//END OF CATCH
+	}//END of setWriteOneRecord
+
+	//Run method to return search
+	public int getSeqSearch(String borrowedBorrowedUserName)
+	{
+		int localIndex = 0;
+		int localFound = NOT_FOUND;
+
+		//while localIndex is less than recordCount, proceed with search
+		while(localIndex < recordCount)
+		{
+			//If borrowedBorrowedUsername is equal to userName[localIndex] set localFound to localIndex
+			//and localIndex to recordCount
+			if(userNames[localIndex].equalsIgnoreCase(borrowedBorrowedUserName))
+			{
+
+				localFound = localIndex;
+				localIndex = recordCount;
+			}//END OF IF STATEMENT (userNames)
+
+			//Else increment local index and cycle back through loop
+			else
+			{
+				localIndex++;
+			}//END OF ELSE STATEMENT
+		}//END OF WHILE LOOP
+
+		return localFound;
+	}//END OF getSeqSearch
+
+	//Compares borrowed value to value stored in passwords in reutrn statement
+	public boolean getPasswordMatch(String borrowedBorrowedPassword)
+	{
+		return passwords[searchedIndex].equals(borrowedBorrowedPassword);
+	}//END OF getPasswordMatch
+
+	//Return masterFileName
+	public String getFileName()
+	{
+		return masterFileName;
+	}//END OF getFileName
+
+	//Return maximum records
+	public int getMaximumRecords()
+	{
+		return MAXIMUM_RECORDS;
+	}//END OF getMaximumRecords
+
+	//Return recordCount
+	public int getRecordCount()
+	{
+		return recordCount;
+	}//END OF getRecordCount
+
+	//Return searchedIndex
+	public int getSearchedIndex()
+	{
+		return searchedIndex;
+	}//END OF getSearchedIndex
+}
