@@ -1,0 +1,67 @@
+//AUTHOR: VICTOR BURGESS
+//COURSE: CPT 187
+//CREATE DATE: 4/22/21
+/* PURPOSE: Records the order and stores it to a file to be recalled for the final report
+ */
+
+package edu.CPT187.burgess.project6;
+import java.io.PrintWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+class WritePurchaseOrders 
+{
+	//Initialize variables
+	private boolean fileFoundFlag = false;
+	private String masterFileName = "";
+	private int recordCount = 0;
+
+	//CONSTRUCTOR
+	public WritePurchaseOrders(String borrowedFileName)
+	{
+		masterFileName = borrowedFileName;
+	}//END OF NONDEFAULT CONSTRUCTOR
+
+	//Write file based on inputted parameters
+	public void setWriteOneRecord(String borrowedSubject, String borrowedVerb ,String borrowedPreposition, String borrowedObject, int borrowedLength, int borrowedQuantity, double borrowedTotal)
+	{
+		//Tries to open a file and only continues if the file is opened
+		try
+		{
+
+			//This will attempt to open the file
+			PrintWriter filePW = new PrintWriter (new FileWriter(masterFileName, true));
+			//if the file is found and opened, remaining block is executed
+			//This statement writes borrowed values to the file, separated by tabs
+			filePW.printf("%s\t%s\t%s\t%s\t%d\t%d\t%f\t", borrowedSubject, borrowedVerb, borrowedPreposition, borrowedObject, borrowedLength, borrowedQuantity, borrowedTotal);
+			//set flag to "found"
+			fileFoundFlag = true;
+			//Increment recordCount
+			recordCount++;
+			//Close PrintWriter/File
+			filePW.close();
+		}//END OF TRY
+
+		//catch block, catches errors ONLY if the try block fails to open a file
+		catch (IOException ex)
+		{
+			//If the file is not found or opened, catch is executed,setting flag to not found
+			fileFoundFlag = false;
+		}//END OF CATCH
+	}//END OF setWriteOneRecord
+
+
+	public boolean getFileFoundFlag()
+	{
+		return fileFoundFlag;
+	}//END OF getFileFoundFlag
+
+	public String getFileName()
+	{
+		return masterFileName;
+	}//END of getFileName
+
+	public int getRecordCount()
+	{
+		return recordCount;
+	}//END OF getRecordCount
+}//END OF WritePurchaseOrders Class
