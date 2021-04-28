@@ -1,0 +1,392 @@
+//AUTHOR: VICTOR BURGESS
+//COURSE: CPT 187
+//CREATE DATE: 4/22/21
+/* PURPOSE: Provide the record for sentence generation
+ * also provide the count of records, files found, files not found, amount of searches, and searches found.
+ * Also provide the length of the sentence, quantity, and the grand total cost and quantity
+ */
+
+
+package edu.CPT187.burgess.project6;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Scanner;
+class PrintInventory 
+{
+	//VARIABLE DECLARATION
+	private final int RESET = 0;
+	private final int NOT_FOUND = -1;
+	private final int ONE = 1;
+	private final int MAXIMUM_RECORDS = 75;
+	private String[] printSubjects = new String[MAXIMUM_RECORDS];
+	private String[] printVerbs = new String[MAXIMUM_RECORDS];
+	private String[] printPrepositions = new String[MAXIMUM_RECORDS];
+	private String[] printObjects = new String[MAXIMUM_RECORDS];
+	private int[] printLengths = new int[MAXIMUM_RECORDS];
+	private int[] orderQuantities = new int[MAXIMUM_RECORDS];
+	private double[] orderTotals = new double[MAXIMUM_RECORDS];
+	private int recordCount = 0;
+	private int searchedIndex = 0;
+	private int fileCount = 0;
+	private int filesFound = 0;
+	private int searchCount = 0;
+	private int searchesFound = 0;
+
+	//CONSTRUCTOR
+	//DEFAULT CONSTRUCTOR
+	public PrintInventory()
+	{
+	}//END OF DEFAULT CONSTRUCTOR
+
+	//Uses file handling logic to bring up files and assign them into arrays
+	public void setPrintArrays(String borrowedFileName)
+	{
+		//Opens file and continues only if the file is opened
+		try
+		{
+			//Sets record count to zero and increment fileCount
+			recordCount = RESET;
+			fileCount++;
+			//This statement will attempt to open the file
+			Scanner infile = new Scanner (new FileInputStream(borrowedFileName));
+
+			//test condition for hasNext and maximum records (unknown file size so it remains untested)
+			while (infile.hasNext()== true && recordCount < MAXIMUM_RECORDS)
+			{
+				//Increment filesFound
+
+				//Test condition to run through file and assign values to array
+				printSubjects[recordCount] = infile.next(); //assigns next to printSubjects
+				printVerbs[recordCount] = infile.next(); //assigns next to printVerbs
+				printPrepositions[recordCount] = infile.next(); //assigns next to printPrepositions
+				printObjects[recordCount] = infile.next(); //assigns next to printObjects
+				recordCount++; //Increments record count to run through loop
+			}//END OF WHILE LOOP FOR FILE ARRAY
+			filesFound++;
+			infile.close();
+			setBubbleSort();
+		}//END OF TRY
+
+		//Catches errors ONLY if the try block fails to open a file
+		catch(IOException ex)
+		{
+			//if the file is not found or opened, catch is executed; which sets the flag to "not found"
+
+			recordCount = NOT_FOUND;
+		}//END OF CATCH
+
+	}//END OF setPrintArrays
+
+	//Uses file handling logic to ring up order from produced file
+	public void setPrintArrays(String borrowedFileName, int borrowedSize)
+	{
+		//Opens file and continues only if the file is opened
+		try
+		{
+			//Sets record count to zero and increment fileCount
+			recordCount = RESET;
+			fileCount++;
+			//This statement will attempt to open the file
+			Scanner infile = new Scanner (new FileInputStream(borrowedFileName));
+
+			//test condition for hasNext and maximum records (unknown file size so it remains untested)
+			while (infile.hasNext()== true && recordCount < MAXIMUM_RECORDS && recordCount < borrowedSize)
+			{
+				//Increment filesFound
+
+				//Test condition to run through file and assign values to array
+				printSubjects[recordCount] = infile.next(); //assigns next to printSubjects
+				printVerbs[recordCount] = infile.next(); //assigns next to printVerbs
+				printPrepositions[recordCount] = infile.next(); //assigns next to printPrepositions
+				printObjects[recordCount] = infile.next(); //assigns next to printObjects
+				printLengths[recordCount] = infile.nextInt(); //Assigns next int to printLengths
+				orderQuantities[recordCount] = infile.nextInt(); //assigns next int to orderQuantities
+				orderTotals[recordCount] = infile.nextDouble(); // assigns next double to orderTotals
+				recordCount++; //Increments record count to run through loop
+			}//END OF WHILE LOOP FOR FILE ARRAY		
+			infile.close();
+			setBubbleSort();
+		}//END OF TRY
+		//Catches errors ONLY if the try block fails to open a file
+		catch(IOException ex)
+		{
+			//if the file is not found or opened, catch is executed; which sets the flag to "not found"
+
+			recordCount = NOT_FOUND;
+		}//END OF CATCH
+	}//END OF setPrintArrays
+
+	//Resets searchCount and searchesFound by setting them equal to RESET
+	public void setResetSearchCounts()
+	{
+		searchCount = RESET;
+		searchesFound = RESET;
+	}//END OF setResetSearchCounts
+
+	//Sets searchedIndex equal to getSeqSearch(borrowedSubject)
+	public void setSearchedIndex(String borrowedSubject)
+	{
+		searchedIndex = getBinSearch(borrowedSubject);
+	}//END OF setSearchedIndex
+
+	//Executes bubble sort logic
+	public void setBubbleSort()
+	{
+		//Initialize local variables
+		int localLast = recordCount - ONE;
+		boolean localSwap = false;
+		int localIndex = 0;
+
+		//Test to run loop if  localLast is greater than zero, then set localIndex to ZERO and localSwap to false
+		while(localLast > RESET)
+		{
+			localIndex = RESET;
+			localSwap = false;
+
+			//Test  to run loop if localIndex is less than localLast then begin sorting, increment localIndex
+			while(localIndex < localLast)
+			{
+				//IF Print subjects unicode values are unsorted, sort elements and set localSwap to true
+				if(printSubjects[localIndex].compareToIgnoreCase(printSubjects[localIndex+1]) > 0)
+				{
+					setSwapArrayElements(localIndex);
+					localSwap = true;
+				}//END OF IF STATEMENT
+
+				localIndex++;
+			}//END OF NESTED WHILE LOOP (localLast)
+
+			//IF localSwap equals false, set localLast to zero
+			if(localSwap == false)
+			{
+				localLast = RESET;
+			}//END OF IF STATEMENT (LOCALSWAP)
+
+			//ELSE decrement localLast
+			else
+			{
+				localLast--;
+			}//END OF ELSE STATEMENT (localSwap)
+
+		}//END OF WHILE LOOP (RESET)
+	}//END OF setBubbleSort
+
+	//swap array elements for all field arrays using 1 local variable per field
+	public void setSwapArrayElements(int borrowedIndex)
+	{
+		//Initialize local variables
+		String localSubjects = "";
+		String localVerbs = "";
+		String localPrepositions = "";
+		String localObjects = "";
+		int localPrintLengths = 0;
+		int localOrderQuantities = 0;
+		double localOrderTotals = 0.0;
+
+		//Using A=B, B=C, C=A logic, swap values in fields.
+		localSubjects = printSubjects[borrowedIndex];
+		printSubjects[borrowedIndex] = printSubjects[borrowedIndex + ONE];
+		printSubjects[borrowedIndex + ONE] = localSubjects;
+
+		localVerbs = printVerbs[borrowedIndex];
+		printVerbs[borrowedIndex] = printVerbs[borrowedIndex + ONE];
+		printVerbs[borrowedIndex + ONE] = localVerbs;
+
+		localPrepositions = printPrepositions[borrowedIndex];
+		printPrepositions[borrowedIndex] = printPrepositions[borrowedIndex + ONE];
+		printPrepositions[borrowedIndex + ONE] = localPrepositions;
+
+		localObjects = printObjects[borrowedIndex];
+		printObjects[borrowedIndex] = printObjects[borrowedIndex + ONE];
+		printObjects[borrowedIndex + ONE] = localObjects;
+
+		localPrintLengths = printLengths[borrowedIndex];
+		printLengths[borrowedIndex] = printLengths[borrowedIndex + ONE];
+		printLengths[borrowedIndex + ONE] = localPrintLengths;
+
+		localOrderQuantities = orderQuantities[borrowedIndex];
+		orderQuantities[borrowedIndex] = orderQuantities[borrowedIndex + ONE];
+		orderQuantities[borrowedIndex + ONE] = localOrderQuantities;
+
+		localOrderTotals = orderTotals[borrowedIndex];
+		orderTotals[borrowedIndex] = orderTotals[borrowedIndex + ONE];
+		orderTotals[borrowedIndex + ONE] = localOrderTotals;
+	}//END OF setSwapArrayElements
+
+	//Return SearchResults using binary file searching method
+	public int getBinSearch(String borrowedBorrowedSubject)
+	{
+		//Initialize localVariables
+		int localLast = recordCount - ONE;
+		int localFirst = 0;
+		int localMid = 0;
+		boolean localFound = false;
+		searchCount++;
+		//While loop for if localFirst is greater than or equal to local last
+		// and if localFound is equal to false, then continue search
+		while(localFirst <= localLast && localFound == false)
+		{
+			localMid = (localFirst + localLast) / (ONE + ONE);
+
+			//IF the inputted search value is equal to the subject at local mid, set local found to true
+			if(printSubjects[localMid].equalsIgnoreCase(borrowedBorrowedSubject))
+			{
+				localFound = true;
+				searchesFound++;
+			}//END OF IF STATEMENT equalsIgnoreCase
+
+			//Else , test if array values at  subject at local mid  and borrowedBorrowedSubject are sorted
+			else
+			{
+				//If both values are sorted, set localFirst equal to localMid plus one
+				if(printSubjects[localMid].compareToIgnoreCase(borrowedBorrowedSubject) < 0)
+				{
+					localFirst = localMid + ONE;
+				}//END OF IF STATEMENT (compareToIgnoreCase)
+
+				//Else, localLast = localMid - ONE
+				else
+				{
+					localLast = localMid - ONE;
+				}//END OF ElSE STATEMENT (comapreToIgnoreCase)
+
+			}//END OF ELSE STATEMENT (equalsIgnoreCase
+
+		}//END OF WHILE LOOP
+
+		//IF localFound is false, set localMid to NOT_FOUND
+		if(localFound == false)
+		{
+			localMid = NOT_FOUND;
+		}//END OF IF STATEMENT
+		return localMid;
+	}//END OF getBinSearch
+
+	//Return MAXIMUM_RECORDS
+	public int getMaximumRecords()
+	{
+		return MAXIMUM_RECORDS;
+	}//END OF getMaximumRecords
+
+	//Return recordCount
+	public int getRecordCount()
+	{
+		return recordCount;
+	}//END OF getRecordCount
+
+	//Return searchedIndex
+	public int getSearchedIndex()
+	{
+		return searchedIndex;
+	}//END OF getSearchedIndex
+
+	//Return printSubjects
+	public String[] getPrintSubjects()
+	{
+		return printSubjects;
+	}//END OF getPrintSubjects
+
+	//Return printVerbs
+	public String[] getPrintVerbs()
+	{
+		return printVerbs;
+	}//END OF getPrintVerbs
+
+	//Return printPrepositions
+	public String[] getPrintPrepositions()
+	{
+		return printPrepositions;
+	}//END OF getPrintPrepositions
+
+	//Return printObjects
+	public String[] getPrintObjects()
+	{
+		return printObjects;
+	}//END OF getPrintObjects
+
+	//Return printLengths
+	public int[] getPrintLengths()
+	{
+		return printLengths;
+	}//END OF getPrintLengths
+
+	//Return orderQuantities
+	public int[] getOrderQuantities()
+	{
+		return orderQuantities;
+	}//END OF getOrderQuantities
+
+	//Return orderTotals
+	public double[] getOrderTotals()
+	{
+		return orderTotals;
+	}//END OF getOrderTotals
+
+	//Return fileCount
+	public int getFileCount()
+	{
+		return fileCount;
+	}//End of getFileCount
+
+	//Return filesFound
+	public int getFilesFound()
+	{
+		return filesFound;
+	}//END of getFilesFound
+
+	//Return fileCount - filesFound
+	public int getFilesNotFound()
+	{
+		return fileCount - filesFound;
+	}//END OF getFilesNotFound
+
+	//Return searchCount
+	public int getSearchCount()
+	{
+		return searchCount;
+	}//END OF getSearchCount
+
+	//Return searchesFound
+	public int getSearchesFound()
+	{
+		return searchesFound;
+	}//END OF getSearchesFound
+
+	//Return searchCount - searchesFound
+	public int getSearchesNotFound()
+	{
+		return searchCount - searchesFound;
+	}//END OF getSearchesNotFound
+
+	//Calculates accumulated total of all order quantities
+	public int getWrittenOrderTotalQuantity()
+	{
+		//initialize local variables
+		int localIndex = 0;
+		int localOrderTotalQuantity = 0;
+		//While localIndex is less than max records, add orderQuantities[localIndex] to localOrderTotalQuantity
+		while (localIndex < MAXIMUM_RECORDS)
+		{
+			localOrderTotalQuantity = localOrderTotalQuantity + orderQuantities[localIndex];
+			localIndex++;
+		}//END OF WHILE STATEMENT
+
+		return localOrderTotalQuantity;
+	}//END OF getWrittenOrderTotalQuantity
+
+	//Return OrderTotalCost by adding array of ordertotal together
+	public double getWrittenOrderTotalCost()
+	{
+		//initialize local variables
+		int localIndex = 0;
+		double localOrderTotal = 0.0;
+		//While localIndex is less than max records, add orderTotals[localIndex] to localGrandTotal
+		while (localIndex < MAXIMUM_RECORDS)
+		{
+			localOrderTotal = localOrderTotal + orderTotals[localIndex];
+			localIndex++;
+		}//END OF WHILE STATEMENT
+
+		return localOrderTotal;
+	}//END OF getGrandTotal
+}
